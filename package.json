@@ -1,0 +1,20 @@
+{
+    "name": "countdown-timer-stopwatch",
+    "version": "1.0.0",
+    "description": "Counts for some seconds",
+    "main": "index.js",
+    "engines": {
+        "node": "14.x"
+    },
+    "type": "module",
+    "scripts": {
+        "start": "node src/index.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "firebase-admin": "^11.10.1",
+        "fs": "^0.0.1-security",
+        "mysql2": "^3.5.2",
+        "timer-stopwatch": "^0.2.0"
+    }
+}
