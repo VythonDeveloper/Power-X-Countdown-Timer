@@ -2,7 +2,7 @@
     "name": "countdown-timer-stopwatch",
     "version": "1.0.0",
     "description": "Counts for some seconds",
-    "main": "src/index.js",
+    "main": "index.js",
     "engines": {
         "node": "18.x"
     },
