@@ -2,6 +2,7 @@ import { Router } from "express";
 import { readFile } from "fs/promises";
 import admin from "firebase-admin";
 import Stopwatch from "timer-stopwatch";
+import axios from "axios";
 
 const router = Router();
 
@@ -37,6 +38,22 @@ const seconds = 1000 * 300; // 32 seconds
 
 // Create timer
 const timer = new Stopwatch(seconds, { refreshRateMS: 1000 });
+let isTimerRunning = false;
+let gamePeriod = '';
+
+async function makeGameEntryAPI() {
+  gamePeriod = getCurrentDateTime();
+  try {
+    const formData = new FormData();
+    formData.append("period", gamePeriod);
+    formData.append("scriptPassword", "ad38b53ef326ef");
+
+    const response = await axios.post("https://vedicpetsclinicandsurgerycentre.com/power-x/apis/power-x/game-details-entry.php", formData);
+    console.log("API response:", response.data);
+  } catch (error) {
+    console.error("API error:", error.message);
+  }
+}
 
 // Route to start the timer
 router.get("/timer/start", async (req, res) => {
@@ -50,34 +67,41 @@ router.get("/timer/start", async (req, res) => {
     }
 
     // if timer is not started will start here
-    let key = null;
+    await admin
+      .database()
+      .ref("power-x/timer")
+      .remove();
+
     // Send to Firebase every second
-    timer.onTime(function (time) {
+    timer.onTime(async function (time) {
       const seconds = parseInt(time.ms / 1000);
       // Check if data is already in Firebase
-      admin.database().ref("power-x/timer").once("value", (snapshot) => {
-        if (snapshot.val() == null) {
-          key = admin.database().ref("power-x/timer").push({
-            time: seconds,
-            period: getCurrentDateTime(),
-          }).key;
-        } else {
-          if (key !== null) {
-            admin
-              .database()
-              .ref("power-x/timer/" + key)
-              .update({
-                time: seconds,
-              });
-          }
+      const snapshot = await admin.database().ref("power-x/timer").once("value");
+      if (!snapshot.exists()) {
+        await makeGameEntryAPI();
+
+        // Use set() to insert data with the custom key
+        await admin.database().ref(`power-x/timer/${gamePeriod}`).set({
+          time: seconds,
+          period: gamePeriod,
+        });
+
+      } else {
+        if (gamePeriod !== null) {
+          await admin
+            .database()
+            .ref(`power-x/timer/${gamePeriod}`)
+            .update({
+              time: seconds,
+            });
         }
-      });
+      }
     });
 
     // Restart timer after 10 seconds
     timer.onDone(function () {
       setTimeout(async () => {
-        admin
+        await admin
           .database()
           .ref("power-x/timer")
           .remove()
@@ -99,11 +123,12 @@ router.get("/timer/start", async (req, res) => {
   }
 });
 
+
 // Route to stop the timer
-router.get("/timer/stop", (req, res) => {
+router.get("/timer/stop", async (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
-  admin.database().ref("power-x/timer").set(null); // Reset timer to 0 in Firebase
+  await admin.database().ref("power-x/timer").set(null); // Reset timer to 0 in Firebase
   res.send("Power-X Timer stopped");
 });
 
