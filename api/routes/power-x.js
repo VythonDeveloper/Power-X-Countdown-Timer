@@ -8,15 +8,15 @@ const router = Router();
 // Firebase Admin SDK Initialization
 const json = await readFile(
   new URL(
-    "../../countdown-timer-5d62f-firebase-adminsdk-x2az6-f0b9ce8d6c.json",
+    "../../firebase-secret-key.json",
     import.meta.url
   )
 );
 
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(json)),
-  databaseURL: "https://countdown-timer-5d62f-default-rtdb.firebaseio.com"
-}, 'first');
+  databaseURL: "https://game-project-timer-default-rtdb.firebaseio.com"
+}, 'power-x');
 
 // Get current time period
 function getCurrentDateTime() {
@@ -100,7 +100,7 @@ router.get("/timer/start", async (req, res) => {
 });
 
 // Route to stop the timer
-router.post("/timer/stop", (req, res) => {
+router.get("/timer/stop", (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
   admin.database().ref("power-x/timer").set(null); // Reset timer to 0 in Firebase
