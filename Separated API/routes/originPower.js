@@ -16,7 +16,7 @@ const json = await readFile(
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(json)),
   databaseURL: "https://countdown-timer-5d62f-default-rtdb.firebaseio.com"
-}, 'second');
+});
 
 // Get current time period
 function getCurrentDateTime() {
@@ -45,7 +45,7 @@ router.get("/timer/start", async (req, res) => {
     if (timer.state == 1) {
       return res.send({
         error: true,
-        message: "Dus-ka-Dum Timer is already running",
+        message: "Power-X Timer is already running",
       });
     }
 
@@ -55,9 +55,9 @@ router.get("/timer/start", async (req, res) => {
     timer.onTime(function (time) {
       const seconds = parseInt(time.ms / 1000);
       // Check if data is already in Firebase
-      admin.database().ref("dus-ka-dum/timer").once("value", (snapshot) => {
+      admin.database().ref("power-x/timer").once("value", (snapshot) => {
         if (snapshot.val() == null) {
-          key = admin.database().ref("dus-ka-dum/timer").push({
+          key = admin.database().ref("power-x/timer").push({
             time: seconds,
             period: getCurrentDateTime(),
           }).key;
@@ -65,7 +65,7 @@ router.get("/timer/start", async (req, res) => {
           if (key !== null) {
             admin
               .database()
-              .ref("dus-ka-dum/timer/" + key)
+              .ref("power-x/timer/" + key)
               .update({
                 time: seconds,
               });
@@ -79,7 +79,7 @@ router.get("/timer/start", async (req, res) => {
       setTimeout(async () => {
         admin
           .database()
-          .ref("dus-ka-dum/timer")
+          .ref("power-x/timer")
           .remove()
           .then(() => {
             timer.reset();
@@ -91,7 +91,7 @@ router.get("/timer/start", async (req, res) => {
     timer.start(); // Start timer
     res.send({
       error: false,
-      message: "Dus-ka-Dum Timer started",
+      message: "Power-X Timer started",
     });
 
   } catch (err) {
@@ -103,8 +103,8 @@ router.get("/timer/start", async (req, res) => {
 router.post("/timer/stop", (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
-  admin.database().ref("dus-ka-dum/timer").set(null); // Reset timer to 0 in Firebase
-  res.send("Dus-ka-Dum Timer stopped");
+  admin.database().ref("power-x/timer").set(null); // Reset timer to 0 in Firebase
+  res.send("Power-X Timer stopped");
 });
 
 export default router;

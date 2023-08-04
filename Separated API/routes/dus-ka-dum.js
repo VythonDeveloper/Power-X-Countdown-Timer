@@ -45,7 +45,7 @@ router.get("/timer/start", async (req, res) => {
     if (timer.state == 1) {
       return res.send({
         error: true,
-        message: "Dus-ka-Dum Timer is already running",
+        message: "dus-ka-dum Timer is already running",
       });
     }
 
@@ -91,7 +91,7 @@ router.get("/timer/start", async (req, res) => {
     timer.start(); // Start timer
     res.send({
       error: false,
-      message: "Dus-ka-Dum Timer started",
+      message: "dus-ka-dum Timer started",
     });
 
   } catch (err) {
@@ -104,7 +104,7 @@ router.post("/timer/stop", (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
   admin.database().ref("dus-ka-dum/timer").set(null); // Reset timer to 0 in Firebase
-  res.send("Dus-ka-Dum Timer stopped");
+  res.send("dus-ka-dum Timer stopped");
 });
 
 export default router;
