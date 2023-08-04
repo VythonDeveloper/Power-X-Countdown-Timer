@@ -1,15 +1,13 @@
 // Import required modules
 import express from "express";
-import circleRouter from "./routes/circle.js"; // Assuming your timer route is defined in circle.js
+import powerXRouter from "./routes/power-x.js";
+import dusKaDumRouter from "./routes/dus-ka-dum.js";
 
-// Create an Express app
 const app = express();
-
-// Middleware to parse JSON data in request bodies
 app.use(express.json());
 
-// Add your routes to the app
-app.use("/circle", circleRouter); // Mount the circleRouter at the /circle path
+app.use("/power-x", powerXRouter); 
+app.use("/dus-ka-dum", dusKaDumRouter); 
 
 // Start the server
 const PORT = process.env.PORT || 3000; // Use the environment variable PORT or port 3000 if not defined
