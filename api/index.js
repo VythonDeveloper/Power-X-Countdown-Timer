@@ -4,7 +4,7 @@ import powerXRouter from "./routes/power-x.js";
 import dusKaDumRouter from "./routes/dus-ka-dum.js";
 import { readFile } from "fs/promises";
 import admin from "firebase-admin";
-
+import cors from "cors";
 // Firebase Admin SDK Initialization
 const json = await readFile(
   new URL(
@@ -19,10 +19,16 @@ admin.initializeApp({
 });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.use("/power-x", powerXRouter); 
-app.use("/dus-ka-dum", dusKaDumRouter);
+var corsOptions = {
+  origin: 'http://localhost',
+  optionsSuccessStatus: 200,
+}
+
+app.use("/power-x", cors(corsOptions), powerXRouter);
+app.use("/dus-ka-dum", cors(corsOptions), dusKaDumRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000; // Use the environment variable PORT or port 3000 if not defined

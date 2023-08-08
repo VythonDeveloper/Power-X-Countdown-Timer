@@ -129,7 +129,10 @@ router.get("/timer/stop", async (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
   await admin.database().ref("power-x/timer").set(null); // Reset timer to 0 in Firebase
-  res.send("Power-X Timer stopped");
+  res.send({
+    error: true,
+    message: "Power-X Timer stopped",
+  });
 });
 
 export default router;

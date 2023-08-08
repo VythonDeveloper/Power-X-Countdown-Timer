@@ -129,7 +129,10 @@ router.get("/timer/stop", async (req, res) => {
   timer.reset();
   timer.stop(); // Stop timer
   await admin.database().ref("dus-ka-dum/timer").set(null); // Reset timer to 0 in Firebase
-  res.send("Dus-Ka-Dum Timer stopped");
+  res.send({
+    error: true,
+    message: "Dus-Ka-Dum Timer stopped",
+  });
 });
 
 export default router;
